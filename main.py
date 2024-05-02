@@ -17,8 +17,15 @@ def index():
 
 @app.route("/api/v1/clients", methods = ["GET"])
 def getClients():
+    username = request.args.get("username")
+    email = request.args.get("email")
     with Session() as session:
-        clients = session.query(Client).all()
+        query = session.query(Client)
+        if username:
+            query = query.filter(Client.username.like(f"%{username}%"))
+        if email:
+            query = query.filter(Client.email.like(f"%{email}%"))
+        clients = query.all()
         clients_json = []
         for client in clients:
             clients_json.append(client.to_json())
@@ -86,7 +93,7 @@ def getEmployeeById(employee_id):
 
 @app.route("/api/v1/employees", methods = ["POST"])
 def addEmployee():
-    if not request.json or not "username" in request.json or not "email" in request.json:
+    if not request.json or not "username" in request.json:
         abort(400)
     employee_name = request.json.get("username")
     post = request.json.get("post")
@@ -209,11 +216,15 @@ def addClientToEmployee(employee_id):
 def getClientsByNameAndEmail():
     username = request.args.get("username")
     email = request.args.get("email")
+    print(EMADLSKDJALKjDL)
+    print(email)
+    print(username)
     with Session() as session:
+        query = se
         if username:
-            query = query.filter(Client.username.ilike(f"%{username}%"))
+            query = query.filter(Client.username.like(f"%{username}%"))
         if email:
-            query = query.filter(Client.email.ilike(f"%{email}%"))
+            query = query.filter(Client.email.like(f"%{email}%"))
         clients = query.all()
         clients_json = []
         for client in clients:
